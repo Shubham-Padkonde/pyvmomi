@@ -3868,9 +3868,7 @@ interactions:
         the maximum size for the compression cache as a percentage of allocated VM
         memory size</summary><key>Mem.MemZipMaxAllocPct</key><optionType xsi:type=\"LongOption\"><valueIsReadonly>false</valueIsReadonly><min>5</min><max>100</max><defaultValue>50</defaultValue></optionType></optionDef><optionDef><label>MemZipMaxPct</label><summary>Sets
         the maximum target size for the compression cache as a percentage of VM size</summary><key>Mem.MemZipMaxPct</key><optionType
-        xsi:type=\"LongOption\"><valueIsReadonly>false</valueIsReadonly><min>5</min><max>100</max><defaultValue>10</defaultValue></optionType></optionDef><optionDef><label>ReallocPolicy</label><summary>Memory
-        scheduling policy. 0: default, 1: GFMS, 2: Legacy</summary><key>Mem.ReallocPolicy</key><optionType
-        xsi:type=\"LongOption\"><valueIsReadonly>false</valueIsReadonly><min>0</min><max>2</max><defaultValue>0</defaultValue></optionType></optionDef><optionDef><label>SampleActivePctMin</label><summary>lower
+        xsi:type=\"LongOption\"><valueIsReadonly>false</valueIsReadonly><min>5</min><max>100</max><defaultValue>10</defaultValue></optionType></optionDef><optionDef><label>SampleActivePctMin</label><summary>lower
         bound for sampled active memory</summary><key>Mem.SampleActivePctMin</key><optionType
         xsi:type=\"LongOption\"><valueIsReadonly>false</valueIsReadonly><min>0</min><max>10</max><defaultValue>1</defaultValue></optionType></optionDef><optionDef><label>SampleDirtiedPctMin</label><summary>lower
         bound for sampled active dirtied memory</summary><key>Mem.SampleDirtiedPctMin</key><optionType
@@ -4937,8 +4935,7 @@ interactions:
         before retrying to connect to a remote host after a connection attempt has
         failed (in seconds). </summary><key>Syslog.global.remoteHost.connectRetryDelay</key><optionType
         xsi:type=\"IntOption\"><valueIsReadonly>false</valueIsReadonly><min>1</min><max>2147483647</max><defaultValue>180</defaultValue></optionType></optionDef><optionDef><label>Syslog.global.remoteHost.maxMsgLen</label><summary>Maximum
-        remote host transmission length (in bytes) when using the TCP and TLS (SSL)
-        protocols. Messages longer than this will be truncated.</summary><key>Syslog.global.remoteHost.maxMsgLen</key><optionType
+        remote host transmission length (in bytes). Messages longer than this will be truncated.</summary><key>Syslog.global.remoteHost.maxMsgLen</key><optionType
         xsi:type=\"IntOption\"><valueIsReadonly>false</valueIsReadonly><min>1024</min><max>16384</max><defaultValue>1024</defaultValue></optionType></optionDef><optionDef><label>Syslog.global.vsanBacking</label><summary>Allow
         the logging and audit record storage directories to be placed on a VSAN. WARNING!
         Enabling this parameter may cause ESXi to hang.</summary><key>Syslog.global.vsanBacking</key><optionType

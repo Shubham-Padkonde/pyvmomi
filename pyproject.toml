@@ -15,7 +15,7 @@ maintainers = [
 description = "VMware vSphere Python SDK"
 readme = "README.rst"
 license = {text = "License :: OSI Approved :: Apache Software License"}
-keywords= ["pyvmomi", "vsphere", "vmware", "esx"]
+keywords = ["Broadcom", "VMware", "VCF", "SDK", "vSphere", "vCenter", "ESX"]
 classifiers = [
     'Development Status :: 5 - Production/Stable',
     'License :: OSI Approved :: Apache Software License',
@@ -23,11 +23,11 @@ classifiers = [
     'Intended Audience :: System Administrators',
     'Intended Audience :: Developers',
     'Environment :: No Input/Output (Daemon)',
-    'Programming Language :: Python :: 3.9',
     'Programming Language :: Python :: 3.10',
     'Programming Language :: Python :: 3.11',
     'Programming Language :: Python :: 3.12',
     'Programming Language :: Python :: 3.13',
+    'Programming Language :: Python :: 3.14',
     'Topic :: Software Development :: Libraries :: Python Modules',
     'Topic :: System :: Distributed Computing',
     'Operating System :: Microsoft :: Windows',
@@ -38,7 +38,7 @@ classifiers = [
 
 [project.optional-dependencies]
 sso = [
-    "pyOpenSSL<24.3.0",
+    "cryptography",
     "lxml",
 ]
 
@@ -58,13 +58,12 @@ pyVmomi = ["**/*.pyi", "py.typed"]
 version = {attr = "pyVmomi.version_info"}
 
 [tool.tox]
-env_list = ["3.9", "3.10", "3.11", "3.12", "3.13"]
+env_list = ["3.10", "3.11", "3.12", "3.13", "3.14"]
 
 [tool.tox.env_run_base]
 description = "Run test under {base_python}"
 deps = [
-    "mock",
-    "discover",
-    "vcrpy==3.0.0",
+    "mock==5.2.0",
+    "vcrpy==7.0.0",
 ]
 commands = [["python", "-m", "unittest", "discover", "tests"]]

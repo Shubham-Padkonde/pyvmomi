@@ -1,5 +1,7 @@
 #############################################################
-# Copyright (c) 2005-2023 VMware, Inc.
+# Copyright (c) 2005-2025 Broadcom. All Rights Reserved.
+# The term "Broadcom" refers to Broadcom Inc.
+# and/or its subsidiaries.
 #############################################################
 
 # @file task.py
@@ -142,6 +144,21 @@ def WaitForTask(task,
                 if raiseOnError is True:
                     raise Exception(err)
                 break
+        # Will get RequestCanceled if the session has been terminated (e.g.,
+        # via request SessionManager.terminate).
+        except vmodl.fault.RequestCanceled:
+            pass
+        # Will get InvalidCollectorVersion if the old session has been invalidated
+        # (e.g., due to expiration) and a new session has been established via
+        # automatic re-login by the session-oriented stub.
+        # In that case the previous version value is invalid in the new session,
+        # and we need to start with no version.
+        # Note that filter would've been destroyed in that scenario, but we still
+        # invoke DestroyFilter(), just in case.
+        except vmodl.query.InvalidCollectorVersion:
+            DestroyFilter(filter)
+            filter = CreateFilter(pc, task)
+            version = None
         except vmodl.fault.ManagedObjectNotFound as e:
             print("Task object has been deleted: %s" % e.obj)
             break

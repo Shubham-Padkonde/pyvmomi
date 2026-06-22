@@ -4,7 +4,7 @@
 # and/or its subsidiaries.
 # A python helper module to do SSO related operations.
 #############################################################
-__author__ = 'VMware, Inc.'
+__author__ = 'Broadcom, Inc.'
 
 #Standard library imports.
 import re
@@ -20,14 +20,15 @@ else:
     from cgi import escape
 #Third-party imports.
 from lxml import etree
-from OpenSSL import crypto
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.serialization import load_der_private_key, load_pem_private_key
+from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.hazmat.primitives.hashes import SHA256, SHA512
 import ssl
 
 from pyVmomi.Security import VerifyCertThumbprint
 
 UTF_8 = 'utf-8'
-SHA256 = 'sha256'
-SHA512 = 'sha512'
 
 # add default parser to etree with resolve_entities set to False
 default_parser = etree.XMLParser(resolve_entities=False)
@@ -639,10 +640,11 @@ class SecurityTokenRequest(object):
         self._request_digest = _make_hash(request.encode(UTF_8)).decode(UTF_8)  # pylint: disable=W0612
         self._timestamp_digest = _make_hash(timestamp.encode(UTF_8)).decode(
             UTF_8)  # pylint: disable=W0612
-        self._algorithm = SHA256
+        self._algorithm = SHA256.name
         self._signed_info = _canonicalize(SIGNED_INFO_TEMPLATE % self.__dict__)
         self._signature_value = _sign(self._private_key,
-                                      self._signed_info).decode(UTF_8)
+                                      self._signed_info,
+                                      SHA256()).decode(UTF_8)
         self._signature_text = _canonicalize(SIGNATURE_TEMPLATE %
                                              self.__dict__)
         self.embed_signature()
@@ -717,11 +719,11 @@ def add_saml_context(serialized_request,
         timestamp.encode(UTF_8)).decode(UTF_8)
 
     security.append(etree.fromstring(timestamp))
-    value_map['_algorithm'] = SHA512
+    value_map['_algorithm'] = SHA512.name
     value_map['_signed_info'] = _canonicalize(SIGNED_INFO_TEMPLATE % value_map)
     value_map['_signature_value'] = _sign(private_key,
                                           value_map['_signed_info'],
-                                          SHA512).decode(UTF_8)
+                                          SHA512()).decode(UTF_8)
     value_map['samlId'] = etree.fromstring(saml_token).get("ID")
     signature = etree.fromstring(
         _canonicalize(REQUEST_SIGNATURE_TEMPLATE % value_map))
@@ -755,17 +757,19 @@ def _load_private_key(der_key):
 
     # Unencrypted PKCS8, or PKCS1 for OpenSSL 1.0.1, PKCS1 for OpenSSL 0.9.8
     try:
-        return crypto.load_privatekey(crypto.FILETYPE_ASN1, der_key, b'')
-    except (crypto.Error, ValueError):
+        return load_der_private_key(
+            data=der_key, password=None, backend=default_backend())
+    except (TypeError, ValueError):
         pass
     # Unencrypted PKCS8 for OpenSSL 0.9.8, and PKCS1, just in case...
     for key_type in ('PRIVATE KEY', 'RSA PRIVATE KEY'):
         try:
-            return crypto.load_privatekey(
-                crypto.FILETYPE_PEM, '-----BEGIN ' + key_type + '-----\n' +
-                base64.encodebytes(der_key).decode(UTF_8) + '-----END ' +
-                key_type + '-----\n', b'')
-        except (crypto.Error, ValueError):
+            data = ('-----BEGIN ' + key_type + '-----\n' +
+                    base64.encodebytes(der_key).decode(UTF_8) +
+                    '-----END ' + key_type + '-----\n')
+            return load_pem_private_key(
+                data=data.encode(), password=None, backend=default_backend())
+        except (TypeError, ValueError):
             pass
     # We could try 'ENCRYPTED PRIVATE KEY' here - but we do not know passphrase.
     raise
@@ -790,7 +794,12 @@ def _sign(private_key, data, digest=SHA256):
     # Convert private key in arbitrary format into DER (DER is binary format
     # so we get rid of \n / \r\n differences, and line breaks in PEM).
     pkey = _load_private_key(_extract_certificate(private_key))
-    return base64.b64encode(crypto.sign(pkey, data.encode(UTF_8), digest))
+
+    return base64.b64encode(pkey.sign(
+        data.encode(UTF_8),
+        padding.PKCS1v15(),
+        algorithm=digest
+    ))
 
 
 def _canonicalize(xml_string):

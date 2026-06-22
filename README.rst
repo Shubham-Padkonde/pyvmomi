@@ -29,12 +29,9 @@ The master is code that is in development, official releases are tagged and
 posted to `pypi <https://pypi.python.org/pypi/pyvmomi/>`_
 
 * The official release is available using pip, just run
-  ``pip install --upgrade pyvmomi``.
-* To install the version in `github <https://github.com/vmware/pyvmomi>`_ use
-  ``python setup.py develop`` for development install or
-  ``python setup.py install``.
-* To install `github's version <https://github.com/vmware/pyvmomi>`_ with sso support, just run
-  ``pip install -e ".[sso]"`` inside project's home folder.
+  ``pip install --upgrade pyvmomi`` or if you want sso support ``pip install --upgrade pyvmomi[sso]``.
+* To install the `github <https://github.com/vmware/pyvmomi>`_ project run
+  ``pip install ".[sso]"`` or if you want a development mode installation ``pip install -e ".[sso]"``.
 
 Testing
 =======
@@ -42,7 +39,7 @@ Unit tests can be invoked by using the `tox <https://testrun.org/tox/>`_ command
 configure multiple python interpreters so that you can test in all the
 environments listed in ``tox.ini`` or you will have to run ``tox`` with the
 ``-e`` flag to run only in your version of python. For example, if you only
-have Python 3.9 then ``tox -e py39`` will limit your test run to Python 3.9.
+have Python 3.14 then ``tox -e py314`` will limit your test run to Python 3.14.
 
 Contributing
 ============
@@ -58,7 +55,7 @@ For general language neutral documentation of vSphere Management API see:
 
 Python Support
 ==============
-* pyVmomi supports Python 3.9+
+* pyVmomi supports Python 3.10+
 
 Versioning
 ====================

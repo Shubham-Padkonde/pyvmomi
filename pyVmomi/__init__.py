@@ -1,10 +1,10 @@
-# Copyright (c) 2005-2025 Broadcom. All Rights Reserved.
+# Copyright (c) 2005-2026 Broadcom. All Rights Reserved.
 # Broadcom Confidential. The term "Broadcom" refers to Broadcom Inc.
 # and/or its subsidiaries.
 
 version_info = (
     9,
-    0,
+    1,
     0,
     0,
 )
