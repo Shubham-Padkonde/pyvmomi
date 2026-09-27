@@ -1675,6 +1675,10 @@ class SessionOrientedStub(StubAdapterBase):
         self.retryDelay = retryDelay
         self.retryCount = retryCount
 
+    def __deepcopy__(self, memo):
+        # Preserve the live session, as SoapStubAdapter preserves its connection.
+        return self
+
     def InvokeMethod(self, mo, info, args):
         # This retry logic is replicated in InvokeAccessor and the two
         # copies need to be in sync
